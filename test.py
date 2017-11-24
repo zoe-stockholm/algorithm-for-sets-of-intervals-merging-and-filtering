@@ -1,6 +1,6 @@
 import unittest
 
-from main import merge_intervals, intervals_sub
+from main import merge_intervals, intervals_sub, remove_overlap
 
 
 class TestMerge(unittest.TestCase):
@@ -10,7 +10,8 @@ class TestMerge(unittest.TestCase):
         excludes = [(20, 30)]
         merged_includes = merge_intervals(includes)
         merged_excludes = merge_intervals(excludes)
-        result = intervals_sub(merged_includes, merged_excludes)
+        after_sub = intervals_sub(merged_includes, merged_excludes)
+        result = remove_overlap(after_sub)
         self.assertEqual(result, [(10, 19), (31, 100)])
 
     def test_case_2(self):
@@ -18,7 +19,8 @@ class TestMerge(unittest.TestCase):
         excludes = None
         merged_includes = merge_intervals(includes)
         merged_excludes = merge_intervals(excludes)
-        result = intervals_sub(merged_includes, merged_excludes)
+        after_sub = intervals_sub(merged_includes, merged_excludes)
+        result = remove_overlap(after_sub)
         self.assertEqual(result, [(10, 5000)])
 
     def test_case_3(self):
@@ -26,7 +28,8 @@ class TestMerge(unittest.TestCase):
         excludes = [(95, 205)]
         merged_includes = merge_intervals(includes)
         merged_excludes = merge_intervals(excludes)
-        result = intervals_sub(merged_includes, merged_excludes)
+        after_sub = intervals_sub(merged_includes, merged_excludes)
+        result = remove_overlap(after_sub)
         self.assertEqual(result, [(10, 94), (206, 300)])
 
     def test_case_4(self):
@@ -34,8 +37,18 @@ class TestMerge(unittest.TestCase):
         excludes = [(95, 205), (410, 420)]
         merged_includes = merge_intervals(includes)
         merged_excludes = merge_intervals(excludes)
-        result = intervals_sub(merged_includes, merged_excludes)
+        after_sub = intervals_sub(merged_includes, merged_excludes)
+        result = remove_overlap(after_sub)
         self.assertEqual(result, [(10, 94), (206, 300), (400, 409), (421, 500)])
+
+    def test_case_5(self):
+        includes = [(90, 100), (50, 60), (20, 190), (400, 550), (700, 800), (230, 410)]
+        excludes = [(500, 750), (150, 269)]
+        merged_includes = merge_intervals(includes)
+        merged_excludes = merge_intervals(excludes)
+        after_sub = intervals_sub(merged_includes, merged_excludes)
+        result = remove_overlap(after_sub)
+        self.assertEqual(result, [(20, 149), (270, 499), (751, 800)])
 
 if __name__ == '__main__':
     unittest.main()
