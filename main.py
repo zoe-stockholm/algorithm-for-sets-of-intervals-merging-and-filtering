@@ -41,68 +41,31 @@ def interval_sub(include, exclude):
 
 
 def intervals_sub(includes, excludes):
-    result = []
-    pointer = 0
-
-    # handle if excludes is None/empty, than no need to do any substraction
-    if len(excludes) == 0:
-        return includes
-
     for exclude in excludes:
-        for idx, include in enumerate(includes[pointer:]):
-            if include[1] < exclude[0]:
-                continue
-            else:
-                after_sub = interval_sub(include, exclude)
-                result += after_sub
-
-                # check if sets of includes reach end
-                if idx < len(includes) - 1:
-                    if exclude[1] < includes[idx+1][0]:
-                        pointer = idx
-                        break
-                    else:
-                        continue
-                else:
-                    break
-
-    return result
-
-
-def has_overlap(a, b):
-    return True if max(0, min(a[1], b[1]) - max(a[0], b[0])) > 0 else False
-
-
-def remove_overlap(sets_intervals):
-    result = []
-    skip = False
-    for idx, interval in enumerate(sets_intervals):
-        if skip:
-            skip = False
-            continue
-        if idx < len(sets_intervals) - 1:
-            if has_overlap(interval, sets_intervals[idx+1]):
-                print(max(interval[0], sets_intervals[idx+1][0]), min(interval[1], sets_intervals[idx+1][1]))
-                result.append((max(interval[0], sets_intervals[idx+1][0]), min(interval[1], sets_intervals[idx+1][1])))
-                skip = True
-            else:
-                result.append(interval)
-        else:
-            result.append(interval)
-            break
-
-    return result
+        includes = list(itertools.chain(*[interval_sub(include, exclude) for include in includes]))
+        
+    return includes
 
 
 if __name__ == '__main__':
 
-    includes = [(10, 100), (200, 300), (400, 500)]
-    excludes = [(95, 205), (410, 420)]
+    #includes = [(10, 100), (200, 300), (400, 500)]
+    #excludes = [(95, 205), (410, 420)]
+    #includes = [(10, 100), (200, 300), (400, 500), (600,800)]
+    #excludes = [(95, 205), (265, 295), (280, 290)]
+    #includes = [(1,200), (400,500), (600,700)]
+    #excludes = [(10,20), (30,40), (50,60)]
+    #includes = [(1,200), (300,400), (500,600)]
+    #excludes = [(1,5), (10,20), (30,400)]
+    #includes = [(1,200), (300,400), (500,600)]
+    #excludes = [(320,330), (340,350)]
+    includes = [(1,200), (300,400), (500,600), (700,800), (900,1000)]
+    excludes = [(120,330), (340,350), (920,930)]
 
     merged_includes = merge_intervals(includes)
     merged_excludes = merge_intervals(excludes)
     after_sub = intervals_sub(merged_includes, merged_excludes)
-    result = remove_overlap(after_sub)
 
-    # expect result is [(10, 94), (206, 300), (400, 409), (421, 500)]
-    print(result)
+    # expect result is [(1, 119), (331, 339), (351, 400), (500, 600), (700, 800), (900, 919), (931, 1000)]
+    print(after_sub)
+    return result
