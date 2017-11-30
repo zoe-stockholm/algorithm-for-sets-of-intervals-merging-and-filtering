@@ -1,3 +1,6 @@
+import itertools
+
+
 def merge_intervals(intervals):
     # handle if inputs is None
     if intervals is None:
@@ -68,4 +71,3 @@ if __name__ == '__main__':
 
     # expect result is [(1, 119), (331, 339), (351, 400), (500, 600), (700, 800), (900, 919), (931, 1000)]
     print(after_sub)
-    return result
